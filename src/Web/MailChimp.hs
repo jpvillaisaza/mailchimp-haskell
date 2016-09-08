@@ -37,12 +37,10 @@ import qualified Data.ByteString as ByteString
 import Data.ByteString.Char8 (unpack)
 
 -- http-client
-import Network.HTTP.Client (Manager, newManager)
-
--- http-client-tls
-import Network.HTTP.Client.TLS (tlsManagerSettings)
+import Network.HTTP.Client (Manager)
 
 -- mailchimp
+import Web.MailChimp.Extra
 import Web.MailChimp.Key
 import Web.MailChimp.List
 import Web.MailChimp.List.Member
@@ -217,12 +215,3 @@ makeBaseUrl key =
           (mappend dataCenter ".api.mailchimp.com")
           443
           ""
-
-
--- |
---
--- Create a manager.
-
-makeManager :: IO Manager
-makeManager =
-  newManager tlsManagerSettings

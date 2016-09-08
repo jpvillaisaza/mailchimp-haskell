@@ -23,6 +23,7 @@ library
       src
   exposed-modules:
       Web.MailChimp
+      Web.MailChimp.Extra
       Web.MailChimp.Key
       Web.MailChimp.List
       Web.MailChimp.List.Member
