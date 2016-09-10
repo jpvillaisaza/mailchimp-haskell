@@ -4,6 +4,7 @@
 ----------------------------------------------------------------------
 -- |
 -- Module: Web.MailChimp.List
+-- Description:
 --
 --
 --
@@ -17,6 +18,7 @@ module Web.MailChimp.List
   where
 
 -- mailchimp
+import Web.MailChimp.Common
 import Web.MailChimp.List.Member
 
 -- servant
@@ -25,10 +27,10 @@ import Servant.API
 
 -- |
 --
---
+-- A list ID.
 
 type ListId =
-  String
+  Id
 
 
 -- |
@@ -44,7 +46,7 @@ type ListApi =
 
 -- |
 --
---
+-- A client for a list.
 
 data ListClient =
   ListClient

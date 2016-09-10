@@ -1,6 +1,7 @@
 ----------------------------------------------------------------------
 -- |
 -- Module: Web.MailChimp.Key
+-- Description:
 --
 --
 --
@@ -15,19 +16,15 @@ module Web.MailChimp.Key
 
 -- attoparsec
 import Data.Attoparsec.ByteString
-import Data.Attoparsec.ByteString.Char8 (anyChar, char, digit, hexadecimal)
-
--- base
-import Control.Applicative
+import Data.Attoparsec.ByteString.Char8 (anyChar, char)
 
 -- bytestring
-import Data.ByteString (ByteString)
 import Data.ByteString.Char8
 
 
 -- |
 --
---
+-- A MailChimp data center.
 
 type DataCenter =
   ByteString
@@ -35,7 +32,7 @@ type DataCenter =
 
 -- |
 --
---
+-- A MailChimp API key.
 
 type Key =
   ByteString

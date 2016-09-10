@@ -1,6 +1,7 @@
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp
+-- Module: Web.MailChimp.Extra
+-- Description:
 --
 --
 --

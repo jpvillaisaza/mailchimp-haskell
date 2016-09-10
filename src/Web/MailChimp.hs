@@ -7,20 +7,27 @@
 ----------------------------------------------------------------------
 -- |
 -- Module: Web.MailChimp
+-- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
 module Web.MailChimp
-  ( Client(..)
-  , ListClient(..)
-  , ListMemberClient(..)
+  ( Key
+  , Client(..)
   , makeClient
+  , ListClient(..)
+  , ListId
+  , ListMemberClient(..)
   , makeListMemberClient
   , ListMemberRequest(..)
   , makeListMemberRequest
   , ListMemberResponse(..)
+  , ListMemberId
+  , ListMemberStatus(..)
+  , Id
+  , Paths_mailchimp.version
   , makeManager
   )
   where
@@ -33,13 +40,14 @@ import Data.Proxy (Proxy (Proxy))
 import Data.Void (Void)
 
 -- bytestring
-import qualified Data.ByteString as ByteString
 import Data.ByteString.Char8 (unpack)
 
 -- http-client
 import Network.HTTP.Client (Manager)
 
 -- mailchimp
+import qualified Paths_mailchimp
+import Web.MailChimp.Common
 import Web.MailChimp.Extra
 import Web.MailChimp.Key
 import Web.MailChimp.List
@@ -59,7 +67,7 @@ import Control.Monad.Trans.Except (ExceptT, runExceptT)
 
 -- |
 --
---
+-- The MailChimp API, version 3.0.
 
 type Api =
   "3.0"
@@ -190,11 +198,12 @@ run =
 makeListMemberClient
   :: Manager
   -> Key
-  -> String
+  -> ListId
   -> Maybe ListMemberClient
 makeListMemberClient manager key listId =
   listMemberClient . (`makeListClient` listId)
     <$> makeClient manager key
+
 
 -- |
 --

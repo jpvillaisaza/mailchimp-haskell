@@ -6,7 +6,8 @@
 
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.Member
+-- Module: Web.MailChimp.List.Member
+-- Description:
 --
 --
 --
@@ -18,12 +19,17 @@ module Web.MailChimp.List.Member
   , ListMemberRequest(..)
   , makeListMemberRequest
   , ListMemberResponse(..)
+  , ListMemberId
+  , ListMemberStatus(..)
   )
   where
 
 -- aeson
 import Data.Aeson
 import qualified Data.Aeson as Aeson
+
+-- mailchimp
+import Web.MailChimp.Common
 
 -- servant
 import Servant.API
@@ -38,6 +44,9 @@ import Data.Text (Text)
 import Control.Monad.IO.Class (MonadIO)
 
 
+type ListMemberId =
+  Id
+
 -- |
 --
 --
@@ -48,19 +57,19 @@ type ListMemberApi =
 
   :<|> Get '[JSON] [ListMemberResponse]
 
-  :<|> Capture "subscriber_hash" String
+  :<|> Capture "subscriber_hash" ListMemberId
          :> Get '[JSON] ListMemberResponse
 
-  :<|> Capture "subscriber_hash" String
+  :<|> Capture "subscriber_hash" ListMemberId
          :> ReqBody '[JSON] ListMemberRequest
          :> Patch '[JSON] ListMemberResponse
 
-  :<|> Capture "subscriber_hash" String
+  :<|> Capture "subscriber_hash" ListMemberId
          :> ReqBody '[JSON] ListMemberRequest
          :> Put '[JSON] ListMemberResponse
 
 
-  :<|> Capture "subscriber_hash" String
+  :<|> Capture "subscriber_hash" ListMemberId
          :> Delete '[JSON] String
 
 
@@ -93,7 +102,7 @@ data ListMemberClient =
 
     , getListMember
         :: forall m . MonadIO m
-        => String
+        => ListMemberId
         -> m (Either ServantError ListMemberResponse)
 
       -- |
@@ -102,7 +111,7 @@ data ListMemberClient =
 
     , updateListMember
         :: forall m . MonadIO m
-        => String
+        => ListMemberId
         -> ListMemberRequest
         -> m (Either ServantError ListMemberResponse)
 
@@ -112,7 +121,7 @@ data ListMemberClient =
 
     , addOrUpdateListMember
         :: forall m . MonadIO m
-        => String
+        => ListMemberId
         -> ListMemberRequest
         -> m (Either ServantError ListMemberResponse)
 
@@ -122,7 +131,7 @@ data ListMemberClient =
 
     , deleteListMember
         :: forall m . MonadIO m
-        => String
+        => ListMemberId
         -> m (Either ServantError String)
 
     }
@@ -134,9 +143,9 @@ data ListMemberClient =
 
 data ListMemberRequest =
   ListMemberRequest
-    { listMemberEmailAddress :: String
+    { listMemberEmailAddress :: Text
     , listMemberMergeFields :: [(Text, Text)]
-    , listMemberStatus :: String
+    , listMemberStatus :: ListMemberStatus
     , listMemberExtra :: [(Text, Aeson.Value)]
     }
   deriving (Show)
@@ -144,11 +153,11 @@ data ListMemberRequest =
 
 -- |
 --
---
+-- Create a list member request.
 
 makeListMemberRequest
-  :: String
-  -> String
+  :: Text -- ^ Email
+  -> ListMemberStatus
   -> ListMemberRequest
 makeListMemberRequest emailAddress status =
   ListMemberRequest
@@ -166,11 +175,16 @@ makeListMemberRequest emailAddress status =
 instance ToJSON ListMemberRequest where
   toJSON ListMemberRequest {..} =
     Aeson.object $
-      [ "email_address" .= listMemberEmailAddress
-      , ("merge_fields", Aeson.object (fmap (fmap Aeson.toJSON) listMemberMergeFields))
-      , "status" .= listMemberStatus
-      ]
-      `mappend` listMemberExtra
+      "email_address" .= listMemberEmailAddress
+        : mergeFields
+        : "status" .= listMemberStatus
+        : listMemberExtra
+    where
+      mergeFields =
+        ( "merge_fields"
+        , Aeson.object (fmap (fmap toJSON) listMemberMergeFields)
+        )
+
 
 -- |
 --
@@ -178,7 +192,7 @@ instance ToJSON ListMemberRequest where
 
 data ListMemberResponse =
   ListMemberResponse
-    { listMemberId :: Text
+    { listMemberId :: ListMemberId
     }
   deriving (Show)
 
@@ -193,3 +207,26 @@ instance FromJSON ListMemberResponse where
       \o ->
         ListMemberResponse
           <$> o .: "id"
+
+
+-- |
+--
+--
+
+data ListMemberStatus
+  = Cleaned
+  | Pending
+  | Subscribed
+  | Unsubscribed
+  deriving (Show)
+
+
+-- |
+--
+--
+
+instance ToJSON ListMemberStatus where
+  toJSON Cleaned = "cleaned"
+  toJSON Pending = "pending"
+  toJSON Subscribed = "subscribed"
+  toJSON Unsubscribed = "unsubscribed"
