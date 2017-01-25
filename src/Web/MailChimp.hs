@@ -57,12 +57,12 @@ import Web.MailChimp.List.Member
 import Servant.API
 
 -- servant-client
-import Servant.Client hiding (Client)
+import Servant.Client ( ServantError(..), BaseUrl(..), ClientEnv(..)
+                      , Scheme(..), ClientM, client, runClientM)
 import qualified Servant.Client as Servant
 
 -- transformers
 import Control.Monad.IO.Class
-import Control.Monad.Trans.Except (ExceptT, runExceptT)
 
 
 -- |
@@ -118,7 +118,7 @@ makeClient manager key =
         makeGetLinks :<|> client' = client (Proxy :: Proxy Api) basicAuthData
 
         getLinks :: MonadIO m => m (Either ServantError Object)
-        getLinks = run (makeGetLinks manager baseUrl)
+        getLinks = run makeGetLinks (ClientEnv manager baseUrl)
 
         makeListClient = makeListClient' manager baseUrl client'
 
@@ -163,18 +163,18 @@ makeListMemberClient' manager baseUrl listClient =
       :<|> md4
       :<|> makeDeleteListMember = listClient
 
-    addListMember lm = run (makeAddListMember lm manager baseUrl)
+    addListMember lm = run (makeAddListMember lm) (ClientEnv manager baseUrl)
 
     getListMembers :: MonadIO m => m (Either ServantError [ListMemberResponse])
-    getListMembers = run (md manager baseUrl)
+    getListMembers = run md (ClientEnv manager baseUrl)
 
-    getListMember s = run (md2 s manager baseUrl)
+    getListMember s = run (md2 s) (ClientEnv manager baseUrl)
 
-    updateListMember s lm = run (md3 s lm manager baseUrl)
+    updateListMember s lm = run (md3 s lm) (ClientEnv manager baseUrl)
 
-    addOrUpdateListMember s lm = run (md4 s lm manager baseUrl)
+    addOrUpdateListMember s lm = run (md4 s lm) (ClientEnv manager baseUrl)
 
-    deleteListMember s = run (makeDeleteListMember s manager baseUrl)
+    deleteListMember s = run (makeDeleteListMember s) (ClientEnv manager baseUrl)
   in
     ListMemberClient {..}
 
@@ -185,10 +185,11 @@ makeListMemberClient' manager baseUrl listClient =
 
 run
   :: MonadIO m
-  => ExceptT e IO a
-  -> m (Either e a)
-run =
-  liftIO . runExceptT
+  => ClientM a
+  -> ClientEnv
+  -> m (Either ServantError a)
+run c e =
+  liftIO $ runClientM c e
 
 
 -- |
