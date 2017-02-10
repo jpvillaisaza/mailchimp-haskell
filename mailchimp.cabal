@@ -21,7 +21,7 @@ description: Haskell bindings for the MailChimp API.
 
 category: Web
 
-tested-with: GHC == 7.10.3
+tested-with: GHC == 7.10.3, GHC == 8.0.1
 
 extra-source-files: README.md
 
@@ -46,8 +46,8 @@ library
     , bytestring
     , http-client >= 0.4 && < 0.5
     , http-client-tls >= 0.2 && < 0.3
-    , servant >= 0.7 && < 0.8
-    , servant-client >= 0.7 && < 0.8
+    , servant >= 0.7 && < 0.9
+    , servant-client >= 0.7 && < 0.9
     , text >= 1.2 && < 1.3
     , transformers
   default-language:
