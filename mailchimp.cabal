@@ -23,7 +23,9 @@ category: Web
 
 tested-with: GHC == 7.10.3, GHC == 8.0.1
 
-extra-source-files: README.md
+extra-source-files:
+  CHANGELOG.md
+  README.md
 
 
 library
