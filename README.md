@@ -2,8 +2,8 @@
 
 [![][1]][0]
 
-[0]: https://travis-ci.org/jpvillaisaza/mailchimp-haskell
-[1]: https://travis-ci.org/jpvillaisaza/mailchimp-haskell.svg?branch=master
+[0]: https://circleci.com/gh/jpvillaisaza/mailchimp-haskell
+[1]: https://circleci.com/gh/jpvillaisaza/mailchimp-haskell.svg?style=svg
 
 ![][2]
 ![][3]
