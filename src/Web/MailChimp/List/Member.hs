@@ -1,7 +1,10 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
 ----------------------------------------------------------------------
@@ -28,6 +31,12 @@ module Web.MailChimp.List.Member
 import Data.Aeson
 import qualified Data.Aeson as Aeson
 
+-- base
+import GHC.Generics
+
+-- generics-sop
+import Generics.SOP
+
 -- mailchimp
 import Web.MailChimp.Common
 
@@ -36,41 +45,44 @@ import Servant.API
 
 -- servant-client
 import Servant.Client
+import Servant.Client.Generic
 
 -- text
 import Data.Text (Text)
 
--- transformers
-import Control.Monad.IO.Class (MonadIO)
-
 
 type ListMemberId =
   Id
+
 
 -- |
 --
 --
 
 type ListMemberApi =
-       ReqBody '[JSON] ListMemberRequest
-         :> Post '[JSON] ListMemberResponse
+    ReqBody '[JSON] ListMemberRequest
+      :> Post '[JSON] ListMemberResponse
 
-  :<|> Get '[JSON] [ListMemberResponse]
+  :<|>
+    Get '[JSON] [ListMemberResponse]
 
-  :<|> Capture "subscriber_hash" ListMemberId
-         :> Get '[JSON] ListMemberResponse
+  :<|>
+    Capture "subscriber_hash" ListMemberId
+      :> Get '[JSON] ListMemberResponse
 
-  :<|> Capture "subscriber_hash" ListMemberId
-         :> ReqBody '[JSON] ListMemberRequest
-         :> Patch '[JSON] ListMemberResponse
+  :<|>
+    Capture "subscriber_hash" ListMemberId
+      :> ReqBody '[JSON] ListMemberRequest
+      :> Patch '[JSON] ListMemberResponse
 
-  :<|> Capture "subscriber_hash" ListMemberId
-         :> ReqBody '[JSON] ListMemberRequest
-         :> Put '[JSON] ListMemberResponse
+  :<|>
+    Capture "subscriber_hash" ListMemberId
+      :> ReqBody '[JSON] ListMemberRequest
+      :> Put '[JSON] ListMemberResponse
 
-
-  :<|> Capture "subscriber_hash" ListMemberId
-         :> Delete '[JSON] String
+  :<|>
+    Capture "subscriber_hash" ListMemberId
+      :> Delete '[JSON] String
 
 
 -- |
@@ -84,57 +96,66 @@ data ListMemberClient =
       -- Add a new list member.
 
       addListMember
-        :: forall m . MonadIO m
-        => ListMemberRequest
-        -> m (Either ServantError ListMemberResponse)
+        :: ListMemberRequest
+        -> ClientM ListMemberResponse
 
       -- |
       --
       -- Get information about members in a list.
 
     , getListMembers
-        :: forall m . MonadIO m
-        => m (Either ServantError [ListMemberResponse])
+        :: ClientM [ListMemberResponse]
 
       -- |
       --
       -- Get information about a specific list member.
 
     , getListMember
-        :: forall m . MonadIO m
-        => ListMemberId
-        -> m (Either ServantError ListMemberResponse)
+        :: ListMemberId
+        -> ClientM ListMemberResponse
 
       -- |
       --
       -- Update a list member.
 
     , updateListMember
-        :: forall m . MonadIO m
-        => ListMemberId
+        :: ListMemberId
         -> ListMemberRequest
-        -> m (Either ServantError ListMemberResponse)
+        -> ClientM ListMemberResponse
 
       -- |
       --
       -- Add or update a list member.
 
     , addOrUpdateListMember
-        :: forall m . MonadIO m
-        => ListMemberId
+        :: ListMemberId
         -> ListMemberRequest
-        -> m (Either ServantError ListMemberResponse)
+        -> ClientM ListMemberResponse
 
       -- |
       --
       -- Remove a list member.
 
     , deleteListMember
-        :: forall m . MonadIO m
-        => ListMemberId
-        -> m (Either ServantError String)
+        :: ListMemberId
+        -> ClientM String
 
     }
+  deriving (GHC.Generics.Generic)
+
+
+-- |
+--
+--
+
+instance Generics.SOP.Generic ListMemberClient
+
+
+-- |
+--
+--
+
+instance (Client ListMemberApi ~ client) => ClientLike client ListMemberClient
 
 
 -- |
