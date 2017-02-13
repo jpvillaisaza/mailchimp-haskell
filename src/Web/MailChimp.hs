@@ -1,7 +1,11 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
 ----------------------------------------------------------------------
@@ -15,12 +19,13 @@
 
 module Web.MailChimp
   ( Key
-  , Client(..)
-  , makeClient
+  , MainClient(..)
+  , makeMainClient
+  , AuthClient (..)
+  , makeAuthClientWithKey
   , ListClient(..)
   , ListId
   , ListMemberClient(..)
-  , makeListMemberClient
   , ListMemberRequest(..)
   , makeListMemberRequest
   , ListMemberResponse(..)
@@ -29,6 +34,7 @@ module Web.MailChimp
   , Id
   , Paths_mailchimp.version
   , makeManager
+  , run
   )
   where
 
@@ -38,9 +44,13 @@ import Data.Aeson
 -- base
 import Data.Proxy (Proxy (Proxy))
 import Data.Void (Void)
+import GHC.Generics
 
 -- bytestring
 import Data.ByteString.Char8 (unpack)
+
+-- generics-sop
+import Generics.SOP
 
 -- http-client
 import Network.HTTP.Client (Manager)
@@ -57,126 +67,134 @@ import Web.MailChimp.List.Member
 import Servant.API
 
 -- servant-client
-import Servant.Client hiding (Client)
-import qualified Servant.Client as Servant
+import Servant.Client
+import Servant.Client.Generic
 
 -- transformers
 import Control.Monad.IO.Class
-import Control.Monad.Trans.Except (ExceptT, runExceptT)
 
 
 -- |
 --
 -- The MailChimp API, version 3.0.
 
-type Api =
+type MainApi =
   "3.0"
     :> BasicAuth "" Void
-    :> (Get '[JSON] Object :<|> ListApi)
+    :> AuthApi
+
+
+-- |
+--
+--
+
+newtype MainClient =
+  MainClient
+    { makeAuthClient
+        :: BasicAuthData
+        -> AuthClient
+
+    }
+  deriving (GHC.Generics.Generic)
+
+
+-- |
+--
+--
+instance Generics.SOP.Generic MainClient
+
+
+-- |
+--
+--
+
+instance (Client MainApi ~ client) => ClientLike client MainClient
+
+
+-- |
+--
+--
+
+makeMainClient :: MainClient
+makeMainClient =
+  mkClient (client (Proxy :: Proxy MainApi))
+
+
+-- |
+--
+--
+
+type AuthApi =
+    Get '[JSON] Object
+  :<|>
+    "lists"
+      :> ListApi
+  :<|>
+    "lists"
+      :> Capture "list_id" ListId
+      :> "members"
+      :> ListMemberApi
 
 
 -- |
 --
 -- A client for MailChimp.
 
-data Client =
-  Client
+data AuthClient =
+  AuthClient
     { -- |
       --
       --
 
       getLinks
-        :: forall m . MonadIO m
-        => m (Either ServantError Object)
+        :: ClientM Object
+
+      -- |
+      --
+      -- Create a client for lists.
+
+    , makeListClient
+        :: ListClient
 
       -- |
       --
       -- Create a client for a list.
 
-    , makeListClient
+    , makeListMemberClient
         :: ListId
-        -> ListClient
+        -> ListMemberClient
 
     }
-
-
--- |
---
--- Create a client for MailChimp.
-
-makeClient
-  :: Manager -- ^ A manager
-  -> Key -- ^ A key
-  -> Maybe Client -- ^ The client
-makeClient manager key =
-  case makeBaseUrl key of
-    Nothing ->
-      Nothing
-
-    Just baseUrl ->
-      let
-        makeGetLinks :<|> client' = client (Proxy :: Proxy Api) basicAuthData
-
-        getLinks :: MonadIO m => m (Either ServantError Object)
-        getLinks = run (makeGetLinks manager baseUrl)
-
-        makeListClient = makeListClient' manager baseUrl client'
-
-        basicAuthData = BasicAuthData "" key
-      in
-        Just Client {..}
+  deriving (GHC.Generics.Generic)
 
 
 -- |
 --
 --
 
-makeListClient'
-  :: Manager
-  -> BaseUrl
-  -> Servant.Client ListApi
-  -> ListId
-  -> ListClient
-makeListClient' manager baseUrl client' listId =
+instance Generics.SOP.Generic AuthClient
+
+
+-- |
+--
+--
+
+instance (Client AuthApi ~ client) => ClientLike client AuthClient
+
+
+-- |
+--
+--
+
+makeAuthClientWithKey
+  :: Key
+  -> AuthClient
+makeAuthClientWithKey key =
   let
-    listMemberClient =
-      makeListMemberClient' manager baseUrl (client' listId)
+    MainClient {..} = makeMainClient
   in
-    ListClient {..}
+    makeAuthClient (BasicAuthData "" key)
 
-
--- |
---
---
-
-makeListMemberClient'
-  :: Manager
-  -> BaseUrl
-  -> Servant.Client ListMemberApi
-  -> ListMemberClient
-makeListMemberClient' manager baseUrl listClient =
-  let
-    makeAddListMember
-      :<|> md
-      :<|> md2
-      :<|> md3
-      :<|> md4
-      :<|> makeDeleteListMember = listClient
-
-    addListMember lm = run (makeAddListMember lm manager baseUrl)
-
-    getListMembers :: MonadIO m => m (Either ServantError [ListMemberResponse])
-    getListMembers = run (md manager baseUrl)
-
-    getListMember s = run (md2 s manager baseUrl)
-
-    updateListMember s lm = run (md3 s lm manager baseUrl)
-
-    addOrUpdateListMember s lm = run (md4 s lm manager baseUrl)
-
-    deleteListMember s = run (makeDeleteListMember s manager baseUrl)
-  in
-    ListMemberClient {..}
 
 
 -- |
@@ -185,24 +203,16 @@ makeListMemberClient' manager baseUrl listClient =
 
 run
   :: MonadIO m
-  => ExceptT e IO a
-  -> m (Either e a)
-run =
-  liftIO . runExceptT
-
-
--- |
---
--- Create a client for a list members.
-
-makeListMemberClient
-  :: Manager
+  => Manager
   -> Key
-  -> ListId
-  -> Maybe ListMemberClient
-makeListMemberClient manager key listId =
-  listMemberClient . (`makeListClient` listId)
-    <$> makeClient manager key
+  -> ClientM a
+  -> m (Either ServantError a)
+run manager key =
+  let
+    Just baseUrl =
+      makeBaseUrl key
+  in
+    liftIO . flip runClientM (ClientEnv manager baseUrl)
 
 
 -- |

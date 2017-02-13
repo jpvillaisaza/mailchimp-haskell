@@ -1,4 +1,8 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
 ----------------------------------------------------------------------
@@ -12,17 +16,26 @@
 
 module Web.MailChimp.List
   ( ListApi
-  , ListClient(..)
+  , ListClient (..)
   , ListId
   )
   where
 
+-- base
+import GHC.Generics
+
+-- generics-sop
+import Generics.SOP
+
 -- mailchimp
 import Web.MailChimp.Common
-import Web.MailChimp.List.Member
 
 -- servant
 import Servant.API
+
+-- servant-client
+import Servant.Client
+import Servant.Client.Generic
 
 
 -- |
@@ -38,10 +51,7 @@ type ListId =
 --
 
 type ListApi =
-  "lists"
-    :> Capture "list_id" ListId
-    :> "members"
-    :> ListMemberApi
+    Get '[JSON] [String]
 
 
 -- |
@@ -54,6 +64,20 @@ data ListClient =
       --
       --
 
-      listMemberClient :: ListMemberClient
+      getLists :: ClientM [String]
 
     }
+  deriving (GHC.Generics.Generic)
+
+
+-- |
+--
+--
+instance Generics.SOP.Generic ListClient
+
+
+-- |
+--
+--
+
+instance (Client ListApi ~ client) => ClientLike client ListClient
