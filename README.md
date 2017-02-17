@@ -11,6 +11,12 @@
 [2]: https://www.stackage.org/package/mailchimp/badge/lts
 [3]: https://www.stackage.org/package/mailchimp/badge/nightly
 
+## Coverage
+
+- API Root
+- Lists
+  - Members
+
 ## License
 
 Licensed under the MIT license. See [LICENSE.md](LICENSE.md).
