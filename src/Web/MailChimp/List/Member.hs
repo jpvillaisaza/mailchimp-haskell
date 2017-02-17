@@ -18,12 +18,12 @@
 
 module Web.MailChimp.List.Member
   ( ListMemberApi
-  , ListMemberClient(..)
-  , ListMemberRequest(..)
+  , ListMemberClient (..)
+  , ListMemberRequest (..)
   , makeListMemberRequest
-  , ListMemberResponse(..)
+  , ListMemberResponse (..)
   , ListMemberId
-  , ListMemberStatus(..)
+  , ListMemberStatus (..)
   )
   where
 

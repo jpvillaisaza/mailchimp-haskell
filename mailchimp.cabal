@@ -33,14 +33,14 @@ library
       src
   exposed-modules:
       Web.MailChimp
-      Web.MailChimp.Tutorial
-  other-modules:
-      Paths_mailchimp
       Web.MailChimp.Common
       Web.MailChimp.Extra
       Web.MailChimp.Key
       Web.MailChimp.List
       Web.MailChimp.List.Member
+      Web.MailChimp.Tutorial
+  other-modules:
+      Paths_mailchimp
   build-depends:
       aeson >= 1.1 && < 1.2
     , attoparsec >= 0.13 && < 0.14

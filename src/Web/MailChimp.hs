@@ -17,23 +17,14 @@
 ----------------------------------------------------------------------
 
 module Web.MailChimp
-  ( Key
-  , MainClient(..)
+  ( MainClient (..)
   , makeMainClient
   , AuthClient (..)
   , makeAuthClientWithKey
-  , ListClient(..)
-  , ListId
-  , ListMemberClient(..)
-  , ListMemberRequest(..)
-  , makeListMemberRequest
-  , ListMemberResponse(..)
-  , ListMemberId
-  , ListMemberStatus(..)
-  , Id
-  , Paths_mailchimp.version
-  , makeManager
   , run
+  , makeBaseUrl
+  , Paths_mailchimp.version
+  , module X
   )
   where
 
@@ -56,11 +47,11 @@ import Network.HTTP.Client (Manager)
 
 -- mailchimp
 import qualified Paths_mailchimp
-import Web.MailChimp.Common
-import Web.MailChimp.Extra
-import Web.MailChimp.Key
-import Web.MailChimp.List
-import Web.MailChimp.List.Member
+import Web.MailChimp.Common as X
+import Web.MailChimp.Extra as X
+import Web.MailChimp.Key as X
+import Web.MailChimp.List as X
+import Web.MailChimp.List.Member as X
 
 -- servant
 import Servant.API
