@@ -42,7 +42,7 @@ library
   other-modules:
       Paths_mailchimp
   build-depends:
-      aeson >= 1.1 && < 1.2
+      aeson >= 1.0 && < 1.2
     , attoparsec >= 0.13 && < 0.14
     , base >= 4.8 && < 4.10
     , bytestring
