@@ -21,7 +21,7 @@ description: Haskell bindings for the MailChimp API.
 
 category: Web
 
-tested-with: GHC == 7.10.3, GHC == 8.0.1
+tested-with: GHC == 7.10.3, GHC == 8.0.1, GHC == 8.0.2
 
 extra-source-files:
   CHANGELOG.md
@@ -70,7 +70,7 @@ test-suite sd
       Web.MailChimpSpec
   build-depends:
       base
-    , hspec >= 2.2 && < 2.3
+    , hspec >= 2.4 && < 2.5
     , mailchimp
   default-language:
       Haskell2010
