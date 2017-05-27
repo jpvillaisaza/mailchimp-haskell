@@ -24,19 +24,7 @@ main =
 
 spec :: Spec
 spec =
-  describe "makeClient" $ do
-    it "" $ do
-      manager <- makeManager
-      let
-        maybeClient =
-          makeClient manager mempty
-      unless (isNothing maybeClient) $
-        pending
-
-    it "" $ do
-      manager <- makeManager
-      let
-        maybeClient =
-          makeClient manager "01234567890123456789012345678901-ab01"
-      unless (isJust maybeClient) $
-        pending
+  describe "makeBaseUrl" $ do
+    it "makes a base url" $ do
+      makeBaseUrl "01234567890123456789012345678901-ab01"
+        `shouldSatisfy` isJust

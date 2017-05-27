@@ -6,9 +6,10 @@ dependencies:
 
   override:
     - stack setup
-    - stack build --only-dependencies
+    - stack build --test --only-dependencies
 
 test:
 
   override:
     - stack build
+    - stack build --test
