@@ -1,3 +1,7 @@
+# 0.2.1
+
+- Tested with GHC 8.0.2.
+
 # 0.2.0
 
 - Moved to Servant 0.10 (3931320)
