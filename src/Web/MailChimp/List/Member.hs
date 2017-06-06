@@ -22,6 +22,7 @@ module Web.MailChimp.List.Member
   , ListMemberRequest (..)
   , makeListMemberRequest
   , ListMemberResponse (..)
+  , ListMembersResponse (..)
   , ListMemberId
   , ListMemberStatus (..)
   )
@@ -64,7 +65,7 @@ type ListMemberApi =
       :> Post '[JSON] ListMemberResponse
 
   :<|>
-    Get '[JSON] [ListMemberResponse]
+    Get '[JSON] ListMembersResponse
 
   :<|>
     Capture "subscriber_hash" ListMemberId
@@ -104,7 +105,7 @@ data ListMemberClient =
       -- Get information about members in a list.
 
     , getListMembers
-        :: ClientM [ListMemberResponse]
+        :: ClientM ListMembersResponse
 
       -- |
       --
@@ -214,6 +215,8 @@ instance ToJSON ListMemberRequest where
 data ListMemberResponse =
   ListMemberResponse
     { listMemberId :: ListMemberId
+    , listMemberResponseEmail :: Text
+    , listMemberResponseStatus :: ListMemberStatus
     }
   deriving (Show)
 
@@ -228,6 +231,30 @@ instance FromJSON ListMemberResponse where
       \o ->
         ListMemberResponse
           <$> o .: "id"
+          <*> o .: "email_address"
+          <*> o .: "status"
+
+
+-- |
+--
+--
+
+data ListMembersResponse =
+  ListMembersResponse
+    { listMembersMembers :: [ListMemberResponse]
+    }
+  deriving (Show)
+
+-- |
+--
+--
+
+instance FromJSON ListMembersResponse where
+  parseJSON =
+    Aeson.withObject "" $
+      \o ->
+        ListMembersResponse
+          <$> o .: "members"
 
 
 -- |
@@ -251,3 +278,13 @@ instance ToJSON ListMemberStatus where
   toJSON Pending = "pending"
   toJSON Subscribed = "subscribed"
   toJSON Unsubscribed = "unsubscribed"
+
+instance FromJSON ListMemberStatus where
+  parseJSON =
+    Aeson.withText "" $
+      \s -> case s of
+        "cleaned" -> return Cleaned
+        "pending" -> return Pending
+        "subscribed" -> return Subscribed
+        "unsubscribed" -> return Unsubscribed
+        other -> fail $ "expected ListMemberStatus, encountered " ++ show other
