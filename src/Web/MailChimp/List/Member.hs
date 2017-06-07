@@ -174,6 +174,26 @@ getAllListMembers ListMemberClient {..} = do
 --
 --
 
+getAllListMembers :: ListMemberClient -> ClientM [ListMemberResponse]
+getAllListMembers ListMemberClient{..} = do
+  xs <- listMembersMembers <$> getListMembers Nothing
+  rest <- go 0 (length xs)
+  return $ xs ++ rest
+
+  where go :: Int -> Int -> ClientM [ListMemberResponse]
+        go _ 0 = return []
+        go offset n = do
+          xs <- listMembersMembers <$> getListMembers (Just $ offset + n)
+          rest <- go (offset + n) (length xs)
+          return $ xs ++ rest
+
+
+
+
+-- |
+--
+--
+
 instance Generics.SOP.Generic ListMemberClient
 
 
