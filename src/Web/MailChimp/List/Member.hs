@@ -66,7 +66,8 @@ type ListMemberApi =
       :> Post '[JSON] ListMemberResponse
 
   :<|>
-    QueryParam "offset" Int :> Get '[JSON] ListMembersResponse
+    QueryParam "offset" Int
+      :> Get '[JSON] ListMembersResponse
 
   :<|>
     Capture "subscriber_hash" ListMemberId
@@ -106,7 +107,8 @@ data ListMemberClient =
       -- Get information about members in a list.
 
     , getListMembers
-        :: Maybe Int -> ClientM ListMembersResponse
+        :: Maybe Int
+        -> ClientM ListMembersResponse
 
       -- |
       --
@@ -144,6 +146,28 @@ data ListMemberClient =
 
     }
   deriving (GHC.Generics.Generic)
+
+
+-- |
+--
+--
+--
+-- @since 0.3.0
+
+getAllListMembers
+  :: ListMemberClient
+  -> ClientM [ListMemberResponse]
+getAllListMembers ListMemberClient {..} = do
+  xs <- listMembersMembers <$> getListMembers Nothing
+  rest <- go 0 (length xs)
+  return $ xs ++ rest
+  where
+    go :: Int -> Int -> ClientM [ListMemberResponse]
+    go _ 0 = return []
+    go offset n = do
+      xs <- listMembersMembers <$> getListMembers (Just $ offset + n)
+      rest <- go (offset + n) (length xs)
+      return $ xs ++ rest
 
 
 -- |
