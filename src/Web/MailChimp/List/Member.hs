@@ -311,7 +311,7 @@ data ListMemberStatus
   | Pending
   | Subscribed
   | Unsubscribed
-  deriving (Show)
+  deriving (Show, Eq)
 
 
 -- |
