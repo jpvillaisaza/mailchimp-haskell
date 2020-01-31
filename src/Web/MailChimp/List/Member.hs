@@ -1,11 +1,5 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
 
 ----------------------------------------------------------------------
 -- |
@@ -17,15 +11,12 @@
 ----------------------------------------------------------------------
 
 module Web.MailChimp.List.Member
-  ( ListMemberApi
-  , ListMemberClient (..)
-  , ListMemberRequest (..)
+  ( ListMemberId
+  , ListMemberRequest(..)
   , makeListMemberRequest
-  , ListMemberResponse (..)
-  , ListMembersResponse (..)
-  , getAllListMembers
-  , ListMemberId
-  , ListMemberStatus (..)
+  , ListMemberResponse(..)
+  , ListMemberStatus(..)
+  , ListMembersResponse(..)
   )
   where
 
@@ -34,155 +25,17 @@ import Data.Aeson
 import qualified Data.Aeson as Aeson
 
 -- base
-import GHC.Generics
-
--- generics-sop
-import Generics.SOP
+import Data.Void
 
 -- mailchimp
 import Web.MailChimp.Common
-
--- servant
-import Servant.API
-
--- servant-client
-import Servant.Client
-import Servant.Client.Generic
+import Web.MailChimp.List
 
 -- text
 import Data.Text (Text)
 
-
 type ListMemberId =
   Id
-
-
--- |
---
---
-
-type ListMemberApi =
-    ReqBody '[JSON] ListMemberRequest
-      :> Post '[JSON] ListMemberResponse
-
-  :<|>
-    QueryParam "offset" Int
-      :> Get '[JSON] ListMembersResponse
-
-  :<|>
-    Capture "subscriber_hash" ListMemberId
-      :> Get '[JSON] ListMemberResponse
-
-  :<|>
-    Capture "subscriber_hash" ListMemberId
-      :> ReqBody '[JSON] ListMemberRequest
-      :> Patch '[JSON] ListMemberResponse
-
-  :<|>
-    Capture "subscriber_hash" ListMemberId
-      :> ReqBody '[JSON] ListMemberRequest
-      :> Put '[JSON] ListMemberResponse
-
-  :<|>
-    Capture "subscriber_hash" ListMemberId
-      :> Delete '[JSON] String
-
-
--- |
---
---
-
-data ListMemberClient =
-  ListMemberClient
-    { -- |
-      --
-      -- Add a new list member.
-
-      addListMember
-        :: ListMemberRequest
-        -> ClientM ListMemberResponse
-
-      -- |
-      --
-      -- Get information about members in a list.
-
-    , getListMembers
-        :: Maybe Int
-        -> ClientM ListMembersResponse
-
-      -- |
-      --
-      -- Get information about a specific list member.
-
-    , getListMember
-        :: ListMemberId
-        -> ClientM ListMemberResponse
-
-      -- |
-      --
-      -- Update a list member.
-
-    , updateListMember
-        :: ListMemberId
-        -> ListMemberRequest
-        -> ClientM ListMemberResponse
-
-      -- |
-      --
-      -- Add or update a list member.
-
-    , addOrUpdateListMember
-        :: ListMemberId
-        -> ListMemberRequest
-        -> ClientM ListMemberResponse
-
-      -- |
-      --
-      -- Remove a list member.
-
-    , deleteListMember
-        :: ListMemberId
-        -> ClientM String
-
-    }
-  deriving (GHC.Generics.Generic)
-
-
--- |
---
---
---
--- @since 0.3.0
-
-getAllListMembers
-  :: ListMemberClient
-  -> ClientM [ListMemberResponse]
-getAllListMembers ListMemberClient {..} = do
-  xs <- listMembersMembers <$> getListMembers Nothing
-  rest <- go 0 (length xs)
-  return $ xs ++ rest
-  where
-    go :: Int -> Int -> ClientM [ListMemberResponse]
-    go _ 0 = return []
-    go offset n = do
-      xs <- listMembersMembers <$> getListMembers (Just $ offset + n)
-      rest <- go (offset + n) (length xs)
-      return $ xs ++ rest
-
-
--- |
---
---
-
-instance Generics.SOP.Generic ListMemberClient
-
-
--- |
---
---
-
-instance (Client ListMemberApi ~ client) => ClientLike client ListMemberClient
-
 
 -- |
 --
@@ -196,7 +49,6 @@ data ListMemberRequest =
     , listMemberExtra :: [(Text, Aeson.Value)]
     }
   deriving (Show)
-
 
 -- |
 --
@@ -213,7 +65,6 @@ makeListMemberRequest emailAddress status =
     , listMemberStatus = status
     , listMemberExtra = mempty
     }
-
 
 -- |
 --
@@ -232,7 +83,6 @@ instance ToJSON ListMemberRequest where
         , Aeson.object (fmap (fmap toJSON) listMemberMergeFields)
         )
 
-
 -- |
 --
 --
@@ -244,7 +94,6 @@ data ListMemberResponse =
     , listMemberResponseStatus :: ListMemberStatus
     }
   deriving (Show)
-
 
 -- |
 --
@@ -258,7 +107,6 @@ instance FromJSON ListMemberResponse where
           <$> o .: "id"
           <*> o .: "email_address"
           <*> o .: "status"
-
 
 -- |
 --
@@ -281,7 +129,6 @@ instance FromJSON ListMembersResponse where
         ListMembersResponse
           <$> o .: "members"
 
-
 -- |
 --
 --
@@ -292,7 +139,6 @@ data ListMemberStatus
   | Subscribed
   | Unsubscribed
   deriving (Show, Eq)
-
 
 -- |
 --

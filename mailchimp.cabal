@@ -27,7 +27,6 @@ extra-source-files:
   CHANGELOG.md
   README.md
 
-
 library
   hs-source-dirs:
       src
@@ -42,22 +41,21 @@ library
   other-modules:
       Paths_mailchimp
   build-depends:
-      aeson >= 1.0 && < 1.3
+      aeson >= 1.0
     , attoparsec >= 0.13 && < 0.14
-    , base >= 4.8 && < 4.11
+    , base >= 4.8
     , bytestring
-    , generics-sop >= 0.2 && < 0.4
-    , http-client >= 0.5 && < 0.6
-    , http-client-tls >= 0.3 && < 0.4
-    , servant >= 0.10 && < 0.12
-    , servant-client >= 0.10 && < 0.12
-    , text >= 1.2 && < 1.3
+    , http-client >= 0.5
+    , http-client-tls >= 0.3
+    , servant >= 0.10
+    , servant-client
+    , servant-client-core
+    , text
     , transformers
   default-language:
       Haskell2010
   ghc-options:
       -Wall
-
 
 test-suite sd
   type:
@@ -70,11 +68,10 @@ test-suite sd
       Web.MailChimpSpec
   build-depends:
       base
-    , hspec >= 2.4 && < 2.5
+    , hspec
     , mailchimp
   default-language:
       Haskell2010
-
 
 source-repository head
   type: git

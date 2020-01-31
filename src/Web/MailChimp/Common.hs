@@ -15,7 +15,6 @@ module Web.MailChimp.Common
 -- text
 import Data.Text (Text)
 
-
 -- |
 --
 -- An ID.
