@@ -131,7 +131,7 @@ run manager key =
     Just baseUrl =
       makeBaseUrl key
   in
-    liftIO . flip runClientM (ClientEnv manager baseUrl Nothing)
+    liftIO . flip runClientM (mkClientEnv manager baseUrl)
 
 -- |
 --

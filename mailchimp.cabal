@@ -41,13 +41,13 @@ library
   other-modules:
       Paths_mailchimp
   build-depends:
-      aeson >= 1.0
-    , attoparsec >= 0.13 && < 0.14
-    , base >= 4.8
+      aeson
+    , attoparsec
+    , base >= 4.9
     , bytestring
-    , http-client >= 0.5
-    , http-client-tls >= 0.3
-    , servant >= 0.10
+    , http-client
+    , http-client-tls
+    , servant >= 0.16
     , servant-client
     , servant-client-core
     , text
