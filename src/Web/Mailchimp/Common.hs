@@ -1,13 +1,13 @@
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.Common
+-- Module: Web.Mailchimp.Common
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.Common
+module Web.Mailchimp.Common
   ( Id
   )
   where

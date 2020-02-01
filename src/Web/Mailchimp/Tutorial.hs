@@ -3,14 +3,14 @@
 
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.Tutorial
+-- Module: Web.Mailchimp.Tutorial
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.Tutorial
+module Web.Mailchimp.Tutorial
   ( example
   )
   where
@@ -22,7 +22,7 @@ import System.Environment (getEnv)
 import Data.ByteString.Char8 (pack)
 
 -- mailchimp
-import Web.MailChimp
+import Web.Mailchimp
 
 -- text
 import qualified Data.Text as Text

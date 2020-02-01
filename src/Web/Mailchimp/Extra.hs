@@ -1,13 +1,13 @@
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.Extra
+-- Module: Web.Mailchimp.Extra
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.Extra
+module Web.Mailchimp.Extra
   ( makeManager
   )
   where
