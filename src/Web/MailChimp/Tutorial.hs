@@ -27,7 +27,6 @@ import Web.MailChimp
 -- text
 import qualified Data.Text as Text
 
-
 example :: IO ()
 example = do
   manager <- makeManager
@@ -35,17 +34,15 @@ example = do
   listId <- fmap Text.pack (getEnv "MAILCHIMP_LIST_ID")
 
   let
-    AuthClient {..} = makeAuthClientWithKey key
-    ListMemberClient {..} = makeListMemberClient listId
-
+    basicAuthData = makeBasicAuthData key
   let
     member =
       (makeListMemberRequest "sd@sd.com" Pending)
         { listMemberMergeFields = [("FNAME", "Juan")]
         }
 
-  eitherAdd <- run manager key (addListMember member)
---  eitherAdd <- run manager key (getLinks (BasicAuthData "" key))
+  eitherAdd <- run manager key (addListMember listMemberClient basicAuthData listId member)
+  -- eitherAdd <- run manager key (getLinks mainClient basicAuthData)
 
   case eitherAdd of
     Left err ->

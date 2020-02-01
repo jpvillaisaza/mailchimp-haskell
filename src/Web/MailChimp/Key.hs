@@ -21,7 +21,6 @@ import Data.Attoparsec.ByteString.Char8 (anyChar, char)
 -- bytestring
 import Data.ByteString.Char8
 
-
 -- |
 --
 -- A MailChimp data center.
@@ -29,14 +28,12 @@ import Data.ByteString.Char8
 type DataCenter =
   ByteString
 
-
 -- |
 --
 -- A MailChimp API key.
 
 type Key =
   ByteString
-
 
 -- |
 --
@@ -47,7 +44,6 @@ parseDataCenter
   -> Either String DataCenter
 parseDataCenter =
   parseOnly dataCenterParser
-
 
 -- |
 --
