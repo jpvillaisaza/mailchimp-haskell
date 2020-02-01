@@ -1,19 +1,19 @@
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.List
+-- Module: Web.Mailchimp.List
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.List
+module Web.Mailchimp.List
   ( ListId
   )
   where
 
 -- mailchimp
-import Web.MailChimp.Common (Id)
+import Web.Mailchimp.Common (Id)
 
 -- |
 --

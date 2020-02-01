@@ -3,14 +3,14 @@
 
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.List.Member
+-- Module: Web.Mailchimp.List.Member
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.List.Member
+module Web.Mailchimp.List.Member
   ( ListMemberId
   , ListMemberRequest(..)
   , makeListMemberRequest
@@ -25,7 +25,7 @@ import Data.Aeson
 import qualified Data.Aeson as Aeson
 
 -- mailchimp
-import Web.MailChimp.Common
+import Web.Mailchimp.Common
 
 -- text
 import Data.Text (Text)

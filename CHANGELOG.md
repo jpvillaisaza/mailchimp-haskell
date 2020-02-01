@@ -3,6 +3,7 @@
 ### Breaking changes
 
 * Upgrade to Servant >= 0.16
+* Switch from MailChimp to Mailchimp
 
 # 0.3.0
 

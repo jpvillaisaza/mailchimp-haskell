@@ -9,14 +9,14 @@
 
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp
+-- Module: Web.Mailchimp
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp
+module Web.Mailchimp
   ( Routes(..)
   , ListRoutes(..)
   , listClient
@@ -46,11 +46,11 @@ import Network.HTTP.Client (Manager)
 
 -- mailchimp
 import qualified Paths_mailchimp
-import Web.MailChimp.Common as X
-import Web.MailChimp.Extra as X
-import Web.MailChimp.Key as X
-import Web.MailChimp.List as X
-import Web.MailChimp.List.Member as X
+import Web.Mailchimp.Common as X
+import Web.Mailchimp.Extra as X
+import Web.Mailchimp.Key as X
+import Web.Mailchimp.List as X
+import Web.Mailchimp.List.Member as X
 
 -- servant
 import Servant.API
@@ -65,7 +65,7 @@ import Control.Monad.IO.Class
 
 -- |
 --
--- The MailChimp API, version 3.0.
+-- The Mailchimp API, version 3.0.
 
 data Routes route =
   Routes

@@ -16,8 +16,8 @@ stability: Experimental
 homepage: https://github.com/jpvillaisaza/mailchimp-haskell
 bug-reports: https://github.com/jpvillaisaza/mailchimp-haskell/issues
 
-synopsis: Bindings for the MailChimp API
-description: Haskell bindings for the MailChimp API.
+synopsis: Bindings for the Mailchimp API
+description: Haskell bindings for the Mailchimp API.
 
 category: Web
 
@@ -31,13 +31,13 @@ library
   hs-source-dirs:
       src
   exposed-modules:
-      Web.MailChimp
-      Web.MailChimp.Common
-      Web.MailChimp.Extra
-      Web.MailChimp.Key
-      Web.MailChimp.List
-      Web.MailChimp.List.Member
-      Web.MailChimp.Tutorial
+      Web.Mailchimp
+      Web.Mailchimp.Common
+      Web.Mailchimp.Extra
+      Web.Mailchimp.Key
+      Web.Mailchimp.List
+      Web.Mailchimp.List.Member
+      Web.Mailchimp.Tutorial
   other-modules:
       Paths_mailchimp
   build-depends:
@@ -65,7 +65,7 @@ test-suite sd
   main-is:
       Spec.hs
   other-modules:
-      Web.MailChimpSpec
+      Web.MailchimpSpec
   build-depends:
       base
     , hspec

@@ -1,4 +1,4 @@
-# Haskell bindings for the MailChimp API
+# Haskell bindings for the Mailchimp API
 
 [![][1]][0]
 

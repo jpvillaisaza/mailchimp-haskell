@@ -1,13 +1,13 @@
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.Key
+-- Module: Web.Mailchimp.Key
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.Key
+module Web.Mailchimp.Key
   ( DataCenter
   , Key
   , parseDataCenter
@@ -23,14 +23,14 @@ import Data.ByteString.Char8
 
 -- |
 --
--- A MailChimp data center.
+-- A Mailchimp data center.
 
 type DataCenter =
   ByteString
 
 -- |
 --
--- A MailChimp API key.
+-- A Mailchimp API key.
 
 type Key =
   ByteString
