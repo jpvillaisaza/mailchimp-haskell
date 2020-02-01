@@ -11,6 +11,8 @@
 ----------------------------------------------------------------------
 
 module Web.MailChimp.Tutorial
+  ( example
+  )
   where
 
 -- base
@@ -21,9 +23,6 @@ import Data.ByteString.Char8 (pack)
 
 -- mailchimp
 import Web.MailChimp
-import Web.MailChimp.Extra
-import Web.MailChimp.List
-import Web.MailChimp.List.Member
 
 -- text
 import qualified Data.Text as Text
@@ -37,16 +36,13 @@ example = do
   let
     basicAuthData = makeBasicAuthData key
   let
-    _member =
+    member =
       (makeListMemberRequest "sd@sd.com" Pending)
         { listMemberMergeFields = [("FNAME", "Juan")]
         }
 
-  -- eitherAdd <- run manager key (addListMember listMemberClient basicAuthData listId member)
-  -- eitherAdd <- run manager key (getListMembers listMemberClient basicAuthData listId Nothing)
-  eitherAdd <- run manager key (getAllListMembers basicAuthData listId)
+  eitherAdd <- run manager key (addListMember listMemberClient basicAuthData listId member)
   -- eitherAdd <- run manager key (getLinks mainClient basicAuthData)
-  -- eitherAdd <- run manager key (getLists listClient basicAuthData)
 
   case eitherAdd of
     Left err ->

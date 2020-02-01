@@ -1,3 +1,9 @@
+# 0.4.0
+
+### Breaking changes
+
+* Upgrade to Servant >= 0.16
+
 # 0.3.0
 
 - Added pagination to get list members and helper to get all list

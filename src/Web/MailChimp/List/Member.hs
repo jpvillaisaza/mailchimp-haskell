@@ -24,12 +24,8 @@ module Web.MailChimp.List.Member
 import Data.Aeson
 import qualified Data.Aeson as Aeson
 
--- base
-import Data.Void
-
 -- mailchimp
 import Web.MailChimp.Common
-import Web.MailChimp.List
 
 -- text
 import Data.Text (Text)

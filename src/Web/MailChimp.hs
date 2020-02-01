@@ -17,6 +17,18 @@
 ----------------------------------------------------------------------
 
 module Web.MailChimp
+  ( Routes(..)
+  , ListRoutes(..)
+  , listClient
+  , ListMemberRoutes(..)
+  , listMemberClient
+  , Paths_mailchimp.version
+  , getAllListMembers
+  , makeBasicAuthData
+  , run
+  , makeBaseUrl
+  , module X
+  )
   where
 
 -- aeson
@@ -57,23 +69,28 @@ import Control.Monad.IO.Class
 
 data Routes route =
   Routes
-    { getLinks :: route :- BasicAuth "" Void :> Get '[JSON] Object
+    { getLinks :: route
+        :- BasicAuth "" Void
+        :> Get '[JSON] Object
     , list :: route :- ToServantApi ListRoutes
     , listMember :: route :- ToServantApi ListMemberRoutes
     }
   deriving Generic
 
-type Main2 = "3.0" :> ToServantApi Routes
+type Api = "3.0" :> ToServantApi Routes
 
-mainApi :: Proxy Main2
-mainApi = Proxy
+api :: Proxy Api
+api = Proxy
 
 mainClient :: Routes (AsClientT ClientM)
-mainClient = fromServant (client mainApi)
+mainClient = fromServant (client api)
 
 data ListRoutes route =
   List
-    { getLists :: route :- BasicAuth "" Void :> "lists" :> Get '[JSON] [String]
+    { getLists :: route
+        :- BasicAuth "" Void
+        :> "lists"
+        :> Get '[JSON] [String]
     }
   deriving Generic
 
@@ -82,12 +99,55 @@ listClient = fromServant (list mainClient)
 
 data ListMemberRoutes route =
   ListMember
-    { addListMember :: route :- BasicAuth "" Void :> "lists" :> Capture "list_id" ListId :> "members" :> ReqBody '[JSON] ListMemberRequest :> Post '[JSON] ListMemberResponse
-    , getListMembers :: route :- BasicAuth "" Void :> "lists" :> Capture "list_id" ListId :> "members" :> QueryParam "offset" Int :> Get '[JSON] ListMembersResponse
-    , getListMember :: route :- BasicAuth "" Void :> "lists" :> Capture "list_id" ListId :> "members" :> Capture "subscriber_hash" ListMemberId :> Get '[JSON] ListMemberResponse
-    , updateListMember :: route :- BasicAuth "" Void :> "lists" :> Capture "list_id" ListId :> "members" :> Capture "subscriber_hash" ListMemberId :> ReqBody '[JSON] ListMemberRequest :> Patch '[JSON] ListMemberResponse
-    , addOrUpdateListMember :: route :- BasicAuth "" Void :> "lists" :> Capture "list_id" ListId :> "members" :> Capture "subscriber_hash" ListMemberId :> ReqBody '[JSON] ListMemberRequest :> Put '[JSON] ListMemberResponse
-    , deleteListMember :: route :- BasicAuth "" Void :> "lists" :> Capture "list_id" ListId :> "members" :> Capture "subscriber_hash" ListMemberId :> Delete '[JSON] String
+    { -- | Add a new list member.
+      addListMember :: route
+        :- BasicAuth "" Void
+        :> "lists"
+        :> Capture "list_id" ListId
+        :> "members"
+        :> ReqBody '[JSON] ListMemberRequest
+        :> Post '[JSON] ListMemberResponse
+      -- | Get information about members in a list.
+    , getListMembers :: route
+        :- BasicAuth "" Void
+        :> "lists"
+        :> Capture "list_id" ListId
+        :> "members"
+        :> QueryParam "offset" Int
+        :> Get '[JSON] ListMembersResponse
+      -- | Get information about a specific list member.
+    , getListMember :: route :-
+        BasicAuth "" Void
+        :> "lists"
+        :> Capture "list_id" ListId
+        :> "members"
+        :> Capture "subscriber_hash" ListMemberId
+        :> Get '[JSON] ListMemberResponse
+      -- | Update a list member.
+    , updateListMember :: route
+        :- BasicAuth "" Void
+        :> "lists"
+        :> Capture "list_id" ListId
+        :> "members"
+        :> Capture "subscriber_hash" ListMemberId
+        :> ReqBody '[JSON] ListMemberRequest
+        :> Patch '[JSON] ListMemberResponse
+      -- | Add or update a list member.
+    , addOrUpdateListMember :: route
+        :- BasicAuth "" Void
+        :> "lists"
+        :> Capture "list_id" ListId
+        :> "members" :> Capture "subscriber_hash" ListMemberId
+        :> ReqBody '[JSON] ListMemberRequest
+        :> Put '[JSON] ListMemberResponse
+      -- | Remove a list member.
+    , deleteListMember :: route
+        :- BasicAuth "" Void
+        :> "lists"
+        :> Capture "list_id" ListId
+        :> "members"
+        :> Capture "subscriber_hash" ListMemberId
+        :> Delete '[JSON] String
     }
   deriving Generic
 
@@ -106,7 +166,7 @@ getAllListMembers basicAuthData listId = do
   rest <- go 0 (length xs)
   return $ xs ++ rest
   where
-    -- go :: Int -> Int -> ClientM [ListMemberResponse]
+    go :: Int -> Int -> ClientM [ListMemberResponse]
     go _ 0 = return []
     go offset n = do
       xs <- listMembersMembers <$> getListMembers listMemberClient basicAuthData listId (Just $ offset + n)
