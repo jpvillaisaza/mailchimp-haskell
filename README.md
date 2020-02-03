@@ -1,9 +1,9 @@
-# Haskell bindings for the MailChimp API
+# Haskell bindings for the Mailchimp API
 
 [![][1]][0]
 
 [0]: https://circleci.com/gh/jpvillaisaza/mailchimp-haskell
-[1]: https://circleci.com/gh/jpvillaisaza/mailchimp-haskell.svg?style=svg
+[1]: https://circleci.com/gh/jpvillaisaza/mailchimp-haskell.svg?style=shield
 
 ![][2]
 ![][3]

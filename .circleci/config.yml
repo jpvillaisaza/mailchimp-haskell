@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: fpco/stack-build:lts-14.22
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-stack-{{ checksum "stack.yaml.lock" }}
+      - run:
+          command: stack --no-terminal build --only-dependencies
+      - run:
+          command: stack --no-terminal build --test --only-dependencies
+      - save_cache:
+          key: v1-stack-{{ checksum "stack.yaml.lock" }}
+          paths:
+            - ~/.stack/
+      - run:
+          command: stack --no-terminal build
+      - run:
+          command: stack --no-terminal build --test

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Web.MailChimpSpec
+module Web.MailchimpSpec
   ( main
   , spec
   )
@@ -14,7 +14,7 @@ import Data.Maybe
 import Test.Hspec
 
 -- mailchimp
-import Web.MailChimp
+import Web.Mailchimp
 
 
 main :: IO ()

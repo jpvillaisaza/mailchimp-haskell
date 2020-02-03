@@ -1,13 +1,13 @@
 ----------------------------------------------------------------------
 -- |
--- Module: Web.MailChimp.Extra
+-- Module: Web.Mailchimp.Extra
 -- Description:
 --
 --
 --
 ----------------------------------------------------------------------
 
-module Web.MailChimp.Extra
+module Web.Mailchimp.Extra
   ( makeManager
   )
   where
@@ -17,7 +17,6 @@ import Network.HTTP.Client (Manager, newManager)
 
 -- http-client-tls
 import Network.HTTP.Client.TLS (tlsManagerSettings)
-
 
 -- |
 --

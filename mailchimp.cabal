@@ -1,5 +1,5 @@
 name: mailchimp
-version: 0.2.1
+version: 0.4.0
 
 build-type: Simple
 cabal-version: >= 1.21
@@ -16,8 +16,8 @@ stability: Experimental
 homepage: https://github.com/jpvillaisaza/mailchimp-haskell
 bug-reports: https://github.com/jpvillaisaza/mailchimp-haskell/issues
 
-synopsis: Bindings for the MailChimp API
-description: Haskell bindings for the MailChimp API.
+synopsis: Bindings for the Mailchimp API
+description: Haskell bindings for the Mailchimp API.
 
 category: Web
 
@@ -27,37 +27,35 @@ extra-source-files:
   CHANGELOG.md
   README.md
 
-
 library
   hs-source-dirs:
       src
   exposed-modules:
-      Web.MailChimp
-      Web.MailChimp.Common
-      Web.MailChimp.Extra
-      Web.MailChimp.Key
-      Web.MailChimp.List
-      Web.MailChimp.List.Member
-      Web.MailChimp.Tutorial
+      Web.Mailchimp
+      Web.Mailchimp.Common
+      Web.Mailchimp.Extra
+      Web.Mailchimp.Key
+      Web.Mailchimp.List
+      Web.Mailchimp.List.Member
+      Web.Mailchimp.Tutorial
   other-modules:
       Paths_mailchimp
   build-depends:
-      aeson >= 1.1 && < 1.2
-    , attoparsec >= 0.13 && < 0.14
-    , base >= 4.8 && < 4.10
+      aeson
+    , attoparsec
+    , base >= 4.9
     , bytestring
-    , generics-sop >= 0.2 && < 0.3
-    , http-client >= 0.5 && < 0.6
-    , http-client-tls >= 0.3 && < 0.4
-    , servant >= 0.10 && < 0.11
-    , servant-client >= 0.10 && < 0.11
-    , text >= 1.2 && < 1.3
+    , http-client
+    , http-client-tls
+    , servant >= 0.16
+    , servant-client
+    , servant-client-core
+    , text
     , transformers
   default-language:
       Haskell2010
   ghc-options:
       -Wall
-
 
 test-suite sd
   type:
@@ -67,14 +65,13 @@ test-suite sd
   main-is:
       Spec.hs
   other-modules:
-      Web.MailChimpSpec
+      Web.MailchimpSpec
   build-depends:
       base
-    , hspec >= 2.4 && < 2.5
+    , hspec
     , mailchimp
   default-language:
       Haskell2010
-
 
 source-repository head
   type: git
